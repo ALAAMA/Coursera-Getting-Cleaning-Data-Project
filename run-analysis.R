@@ -38,30 +38,34 @@ download.file(fileUrl,destfile="./data/dataset.zip")
       
 ###Extracting only the measurements on the mean
 ## and standard deviation for each measurement
- colNames <- colnames(dateSet1)
+colNames <- colnames(dateSet1)##Extract column names
 
-##Create vector for defining ID, mean and standard deviation:
- mean_and_std <- (grepl("activityId" , colNames) | 
-                  grepl("subjectId"  , colNames) | 
-                  grepl("mean.."     , colNames) | 
-                  grepl("std.."      , colNames) 
-                  )
+##Create logical vector for activityId,subjectId,
+##mean(contains the words 'mean') and standard deviation(contains workds 'std')
+selected_col <- (grepl("activityId" , colNames) | 
+                 grepl("subjectId"  , colNames) | 
+                 grepl("mean"     , colNames)   | 
+                 grepl("std"      , colNames) 
+                 )
       
-## Making nessesary subset from setAllInOne:
- dateSet2 <- dateSet1[ , mean_and_std == TRUE]
+## Show all rows and only required columns by subseting
+ dateSet2 <- dateSet1[ , selected_col == TRUE]
       
 ## Using descriptive activity names to name the activities in the data set:
  dateSet3 <- merge(dateSet2,
-						       activityLabels,
-                               by='activityId',
-                               all.x=TRUE)
+	          activityLabels,
+                  by='activityId',
+                  all.x=TRUE)
 ##=======================================      
 ## Appropriately labeling the data set with descriptive variable names.      
 ##Create a second, independent tidy data set 
 ##with the average of each variable for each activity and each subject:
  ##create second tidy data set 
-tidy <- aggregate(. ~subjectId + activityId, dateSet3, mean)
-tidy <- tidy[order(tidy$subjectId, tidy$activityId),]
+tidy <- aggregate(. ~subjectId + activityId,
+                  data = dateSet3,##DataSet 
+                  FUN = mean ##function 
+                  )
+tidy <- tidy[order(tidy$subjectId, tidy$activityId),] ## order tidy rows by subjectId,activityId
 ##======================================= 
  ##Write second tidy data set to text file
  write.table(tidy, "tidy.txt", row.name=FALSE)
