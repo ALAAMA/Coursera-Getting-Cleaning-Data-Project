@@ -52,6 +52,7 @@ selected_col <- (grepl("activityId" , colNames) |
  dateSet2 <- dateSet1[ , selected_col == TRUE] ##subset required cols
       
 ## Using descriptive activity names to name the activities in the data set:
+## sql equivalent: select * from dateSet2 x, activityLabels y where x.activityId= y.activityId
  dateSet3 <- merge(dateSet2,
 	          activityLabels,
                   by='activityId',
@@ -60,14 +61,15 @@ selected_col <- (grepl("activityId" , colNames) |
 ## Appropriately labeling the data set with descriptive variable names.      
 ##Create a second, independent tidy data set 
 ##with the average of each variable for each activity and each subject:
- ##create second tidy data set 
-tidy <- aggregate(. ~subjectId + activityId,
+##create second tidy data set 
+## in sql language : select x.subjectId ,x.activityId ,mean(x.col1),mean(x.col2)...mean(x.coln) group by x.subjectId ,x.activityId;
+tidy <- aggregate(. ~subjectId + activityId, ##compute the mean for all data  except  group by subjectId & activityId
                   data = dateSet3,##DataSet 
                   FUN = mean ##function 
                   )
 tidy <- tidy[order(tidy$subjectId, tidy$activityId),] ## order tidy rows by subjectId,activityId
 ##======================================= 
- ##Write second tidy data set to text file
+ ##Write second tidy data set to text file at current working directory
  write.table(tidy, "tidy.txt", row.name=FALSE)
         
       
