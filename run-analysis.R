@@ -31,14 +31,14 @@ download.file(fileUrl,destfile="./data/dataset.zip")
  colnames(subject_test) <- "subjectId"
  colnames(activityLabels) <- c('activityId','activityType')
  ##==========================================     
- ##Merge all data into one set:
- all_train <- cbind(y_train, subject_train, x_train)
- all_test <- cbind(y_test, subject_test, x_test)
- dateSet1 <- rbind(all_train, all_test)
+##Merge all data into one set:
+all_train <- cbind(y_train, subject_train, x_train) ##column bind
+all_test  <- cbind(y_test, subject_test, x_test)    ##column bind
+dateSet1 <- rbind(all_train, all_test)              ##row bind all data set
       
-###Extracting only the measurements on the mean
+###Get only the measurements on the mean
 ## and standard deviation for each measurement
-colNames <- colnames(dateSet1)##Extract column names
+colNames <- colnames(dateSet1)##Extract columns' names
 
 ##Create logical vector for activityId,subjectId,
 ##mean(contains the words 'mean') and standard deviation(contains workds 'std')
@@ -48,8 +48,8 @@ selected_col <- (grepl("activityId" , colNames) |
                  grepl("std"      , colNames) 
                  )
       
-## Show all rows and only required columns by subseting
- dateSet2 <- dateSet1[ , selected_col == TRUE]
+## Show all rows and only required columns  
+ dateSet2 <- dateSet1[ , selected_col == TRUE] ##subset required cols
       
 ## Using descriptive activity names to name the activities in the data set:
  dateSet3 <- merge(dateSet2,
