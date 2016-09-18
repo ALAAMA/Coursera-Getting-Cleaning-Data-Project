@@ -34,11 +34,11 @@ download.file(fileUrl,destfile="./data/dataset.zip")
 ##Merge all data into one set:
 all_train <- cbind(y_train, subject_train, x_train) ##column bind
 all_test  <- cbind(y_test, subject_test, x_test)    ##column bind
-dateSet1 <- rbind(all_train, all_test)              ##row bind all data set
+dataSet1 <- rbind(all_train, all_test)              ##row bind all data set
       
 ###Get only the measurements on the mean
 ## and standard deviation for each measurement
-colNames <- colnames(dateSet1)##Extract columns' names
+colNames <- colnames(dataSet1)##Extract columns' names
 
 ##Create logical vector for activityId,subjectId,
 ##mean(contains the words 'mean') and standard deviation(contains workds 'std')
@@ -49,11 +49,11 @@ selected_col <- (grepl("activityId" , colNames) |
                  )
       
 ## Show all rows and only required columns  
- dateSet2 <- dateSet1[ , selected_col == TRUE] ##subset required cols
+ dataSet2 <- dataSet1[ , selected_col == TRUE] ##subset required cols
       
 ## Using descriptive activity names to name the activities in the data set:
 ## sql equivalent: select * from dateSet2 x, activityLabels y where x.activityId= y.activityId
- dateSet3 <- merge(dateSet2,
+ dataSet3 <- merge(dataSet2,
 	          activityLabels,
                   by='activityId',
                   all.x=TRUE)
@@ -64,7 +64,7 @@ selected_col <- (grepl("activityId" , colNames) |
 ##create second tidy data set 
 ## in sql language : select x.subjectId ,x.activityId ,mean(x.col1),mean(x.col2)...mean(x.coln) group by x.subjectId ,x.activityId;
 tidy <- aggregate(. ~subjectId + activityId, ##compute the mean for all data  except  group by subjectId & activityId
-                  data = dateSet3,##DataSet 
+                  data = dataSet3,##DataSet 
                   FUN = mean ##function 
                   )
 tidy <- tidy[order(tidy$subjectId, tidy$activityId),] ## order tidy rows by subjectId,activityId
